@@ -35,6 +35,7 @@ import Auth from './pages/Auth';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import CartSidebar from './components/cart/CartSidebar';
+import ScrollToTop from './components/layout/ScrollToTop';
 
 // Context Providers
 import { AuthProvider } from './context/AuthContext';
@@ -70,6 +71,7 @@ function App() {
         <CartProvider>
           <CompareProvider>
             <Router>
+            <ScrollToTop />
               <div className="app-container">
                 <Header />
                 <CartSidebar />
