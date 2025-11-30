@@ -58,6 +58,29 @@ const ProductDetail = () => {
       setImageError(false);
     }
   }, [product]);
+
+  // Function to get the correct image URL with cache busting
+  const getImageUrl = (imageUrl) => {
+    if (!imageUrl) return `/images/products/placeholder.jpg`;
+    
+    let finalUrl = imageUrl;
+    
+    // If it's already a full URL (starts with http), use as is
+    if (!imageUrl.startsWith('http')) {
+      // If it's a Supabase storage path, construct the full URL
+      if (imageUrl.includes('public/assets/pages/products/')) {
+        const supabaseUrl = 'https://epkmcfbzwjcthozekzuo.supabase.co';
+        const storagePath = imageUrl.replace('public/', '');
+        finalUrl = `${supabaseUrl}/storage/v1/object/public/${storagePath}`;
+      } else {
+        finalUrl = imageUrl;
+      }
+    }
+    
+    // Add cache busting parameter with product ID (more stable than timestamp)
+    const separator = finalUrl.includes('?') ? '&' : '?';
+    return `${finalUrl}${separator}v=${product?.id || Date.now()}`;
+  };
   
   if (loading) {
     return (
@@ -152,7 +175,8 @@ const ProductDetail = () => {
             </ImageLoadingOverlay>
           )}
           <ProductImage 
-            src={product.image || `/images/products/placeholder.jpg`} 
+            key={product.image} 
+            src={getImageUrl(product.image)} 
             alt={product.name}
             onLoad={handleImageLoad}
             onError={handleImageError}
